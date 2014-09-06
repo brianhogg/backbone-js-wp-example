@@ -168,6 +168,29 @@ post.on("change:title", function(model) {
 					</ul>
 				</section>
 				
+				
+				<section>
+					<h2>Bare Minimum to use Backbone</h2>
+					<pre><code class="javascript" data-trim contenteditable>
+var PostView = Backbone.View.extend({
+    events: {
+        "click .edit": "editPost",
+        "change .post_status": "statusChanged"
+    },
+
+    editPost: function(event) {
+        // ...
+    },
+	
+    statusChanged: function(event) {
+        // ...
+    }
+});
+
+var postView = new PostView({ el: '#my-form' });
+					</code></pre>
+				</section>
+				
 				<section>
 					<h2>View Example</h2>
 					<pre><code class="javascript" data-trim contenteditable>
