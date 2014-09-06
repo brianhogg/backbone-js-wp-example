@@ -15,8 +15,8 @@ var bbp = bbp || {};
     });
 
     $(document).ready(function() {
-        bbp.Posts = new bbp.PostsCollection();
-        bbp.postsView = new bbp.PostsView({ collection: bbp.Posts });
-        bbp.Posts.fetch({ data: { action: 'bbpost_fetch_posts' } });
+        bbp.posts = new bbp.PostsCollection();
+        bbp.postsView = new bbp.PostsView({ collection: bbp.posts });
+        bbp.posts.fetch({ data: { action: 'bbpost_fetch_posts' } });
     });
 })(jQuery);
