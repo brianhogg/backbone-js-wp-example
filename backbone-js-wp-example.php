@@ -32,7 +32,7 @@ class BBPostAdmin {
         foreach ( $folders as $folder ) {
             foreach ( glob( dirname( __FILE__ ) . "/js/$folder/*.js" ) as $filename ) {
                 $basename = basename( $filename );
-                wp_register_script( "$folder/$basename", plugins_url( "js/$folder/$basename", __FILE__ ), array( 'jquery', 'wp-backbone', 'underscore', 'jquery-ui-core', 'jquery-ui-sortable' ), BBPOST_VERSION );
+                wp_register_script( "$folder/$basename", plugins_url( "js/$folder/$basename", __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), BBPOST_VERSION );
                 wp_enqueue_script( "$folder/$basename" );
             }
         }
@@ -70,7 +70,9 @@ class BBPostAdmin {
         if ( ! current_user_can( 'edit_published_posts' ) )
             wp_send_json_error();
 
-        $posts = get_posts();
+        $posts = get_posts( array(
+            'post_status' => 'any'
+        ) );
         $retval = array();
         foreach ( $posts as $post ) {
             $retval[] = array(

@@ -1,8 +1,7 @@
-var bbpost = bbpost || {};
-window.wp = window.wp || {};
+var bbp = bbp || {};
 
 (function($){
-    bbpost.PostView = Backbone.View.extend({
+    bbp.PostView = Backbone.View.extend({
         className: 'bbpost',
 
         render: function() {

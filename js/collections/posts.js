@@ -1,8 +1,8 @@
-var bbpost = bbpost || {};
+var bbp = bbp || {};
 
 (function($){
-    bbpost.PostsCollection = Backbone.Collection.extend({
-        model: bbpost.Post,
+    bbp.PostsCollection = Backbone.Collection.extend({
+        model: bbp.Post,
         url: ajaxurl,
 
         parse: function ( response ) {

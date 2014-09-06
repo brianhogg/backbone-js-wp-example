@@ -1,7 +1,7 @@
-var bbpost = bbpost || {};
+var bbp = bbp || {};
 
 (function($){
-    bbpost.PostsView = Backbone.View.extend({
+    bbp.PostsView = Backbone.View.extend({
         el: '#bbposts',
 
         initialize: function() {
@@ -9,14 +9,14 @@ var bbpost = bbpost || {};
         },
 
         addOne: function(post) {
-            var view = new bbpost.PostView({ model: post });
+            var view = new bbp.PostView({ model: post });
             this.$el.append(view.render().el);
         }
     });
 
     $(document).ready(function() {
-        bbpost.Posts = new bbpost.PostsCollection();
-        bbpost.postsView = new bbpost.PostsView({ collection: bbpost.Posts });
-        bbpost.Posts.fetch({ data: { action: 'bbpost_fetch_posts' } });
+        bbp.Posts = new bbp.PostsCollection();
+        bbp.postsView = new bbp.PostsView({ collection: bbp.Posts });
+        bbp.Posts.fetch({ data: { action: 'bbpost_fetch_posts' } });
     });
 })(jQuery);

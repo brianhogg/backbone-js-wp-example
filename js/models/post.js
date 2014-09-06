@@ -1,7 +1,7 @@
-var bbpost = bbpost || {};
+var bbp = bbp || {};
 
 (function($){
-    bbpost.Post = Backbone.Model.extend({
+    bbp.Post = Backbone.Model.extend({
         save: function( attributes, options ) {
             var options = {};
             options.data = {
