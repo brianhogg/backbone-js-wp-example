@@ -53,6 +53,7 @@ class BBPostAdmin {
         ?>
         <script id="tmpl-bbpost" type="text/html">
             <div class="bbpost">
+                <h2><%- title %></h2>
                 Post title: <input type="text" class="title" value="<%- title %>" />, Status:
                     <select class="post_status">
                         <option value=""></option>

@@ -420,6 +420,7 @@ wp_enqueue_style( 'bbpost.admin.css' );
                         <pre><code class="html" data-trim contenteditable>
 <script id="tmpl-bbpost" type="text/html">
     <div class="bbpost">
+        <h2><%- title %></h2>
         Post title: <input type="text" class="title" value="<%- title %>" />, Status:
         <select class="post_status">
             <option value=""></option>
@@ -442,8 +443,10 @@ wp_enqueue_style( 'bbpost.admin.css' );
 				<section>
 					<h2>Admin page template</h2>
 					<h3>Individual post</h3>
-                    <pre><code>
+                    <pre><code class="html">
 &lt;div class=&quot;bbpost&quot;&gt;
+    <!-- will update when the model updates, automatically -->
+    &lt;h2&gt;&lt;%- title %&gt;&lt;/h2&gt;
     Post title: &lt;input type=&quot;text&quot; class=&quot;title&quot; value=&quot;&lt;%- title %&gt;&quot; /&gt;, 
     Status: 
     &lt;select class=&quot;post_status&quot;&gt;
@@ -492,6 +495,10 @@ var bbp = bbp || {};
 (function($){
     bbp.PostView = Backbone.View.extend({
         className: 'bbpost',
+
+        initialize: function() {
+            this.model.on("change", this.render, this);
+        },
 
         render: function() {
             var template = _.template($('#tmpl-bbpost').html());

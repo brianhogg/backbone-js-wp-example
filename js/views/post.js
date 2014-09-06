@@ -4,6 +4,10 @@ var bbp = bbp || {};
     bbp.PostView = Backbone.View.extend({
         className: 'bbpost',
 
+        initialize: function() {
+            this.model.on("change", this.render, this);
+        },
+
         render: function() {
             var template = _.template($('#tmpl-bbpost').html());
             var html = template(this.model.toJSON());
