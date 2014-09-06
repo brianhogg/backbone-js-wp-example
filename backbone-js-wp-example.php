@@ -27,12 +27,16 @@ class BBPostAdmin {
     }
 
     function enqueue_scripts() {
+        wp_enqueue_script( 'jquery' );
+        wp_enqueue_script( 'backbone' );
+        wp_enqueue_script( 'underscore' );
+        wp_enqueue_script( 'wp-util' );
         // Add backbone.js models first, then collections, followed by views
         $folders = array( 'models', 'collections', 'views' );
         foreach ( $folders as $folder ) {
             foreach ( glob( dirname( __FILE__ ) . "/js/$folder/*.js" ) as $filename ) {
                 $basename = basename( $filename );
-                wp_register_script( "$folder/$basename", plugins_url( "js/$folder/$basename", __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), BBPOST_VERSION );
+                wp_register_script( "$folder/$basename", plugins_url( "js/$folder/$basename", __FILE__ ), array( 'jquery', 'backbone', 'underscore', 'wp-util' ), BBPOST_VERSION );
                 wp_enqueue_script( "$folder/$basename" );
             }
         }

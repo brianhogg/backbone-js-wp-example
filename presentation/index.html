@@ -83,7 +83,7 @@
 				
 				<section>
 					<h2>Templates</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var template = _.template("hello <%= name %>");
 var html = template({ name: 'Brian' });
 console.log( html ); // "hello Brian"
@@ -129,7 +129,7 @@ console.log( html ); // "<strong>&amp;lt;script&amp;gt;</strong>"
 
 				<section>
 					<h2>Model Example</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var Post = Backbone.Model.extend({
     defaults: {
         title: "",
@@ -146,36 +146,82 @@ var post = new Post({ title: "Hello, world", post_status: "draft" });
 var title = post.get("title"); // Hello, world
 var post_status = post.get("post_status"); // draft
 					</code></pre>
+					<p>All models have an <code>id</code> attribute for syncing up with a server</p>
 				</section>
 				
 				<section>
 					<h2>Listening for Changes</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 post.on("change:title", function(model) {
     alert("Title changed to: " + model.get("title"));
 });
 					</code></pre>
 					<p>Or in the models initialize with:</p>
-					<pre><code>this.on("change:title", this.titleChanged);</code></pre>
+					<pre><code class="javascript">this.on("change:title", this.titleChanged);</code></pre>
 				</section>
 				
 				<section>
 					<h2>Views</h2>
-					<p>Used to turn a model into something you can see</p>
+					<ul>
+						<li>Used to turn a model into something you can see</li>
+						<li>Always contains a DOM element (the <strong><code>el</code></strong> property), whether its been added to the viewable page or not</li>
+					</ul>
 				</section>
 				
 				<section>
 					<h2>View Example</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
+var PostView = Backbone.View.extend({
+    tagName: "div", // div by default
+    className: "bbpost", // for styling via CSS
+	
+    events: {
+        "click .edit": "editPost",
+        "change .post_status": "statusChanged"
+    },
+
+    initialize: {
+        this.listenTo(this.model, "change", this.render);
+    },
+
+    render: {
+        // ...
+    }
+});
 					</code></pre>
 				</section>
-
+				
+				<section>
+					<h2>Rendering the View</h2>
+					<pre><code class="javascript" data-trim contenteditable>
+var template = _.template($("#tmpl-bbpost").html());
+var html = template(this.model.toJSON());
+this.$el.html(html);
+return this; // for chaining
+					</code></pre>
+					<p>This uses Underscore.js' <code>_.template</code>, but you can use another!</p>
+				</section>
+				
+				<section>
+					<h2>Accessing the DOM element</h2>
+					<code>this.$el</code>
+					<pre><code class="javascript">this.$el.html()</code></pre>
+					<code>this.el</code>
+					<pre><code class="javascript">
+// From within a parent view
+var view = new PostView({ model: post });
+this.$el.append(view.render().el);
+						</code></pre>
+					<code>this.$</code>
+					<pre><code class="javascript">this.$('.title').val()</code></pre>
+				</section>
+				
 				<section>
 					<h2>Collections</h2>
 					<p>Ordered set of models</p>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var Posts = Backbone.Collection.extend({
-	model: Post
+    model: Post
 });
 
 var post1 = new Post({ title: "Hello, world" });
@@ -186,30 +232,55 @@ var myPosts = new Posts([ post1, post2 ]);
 				</section>
 				
 				<section>
-					<h2>Populating Collections via AJAX</h2>
-					
-					<pre><code data-trim contenteditable>
-var Posts = Backbone.Collection.extend({
-	model: Post,
-	url: ajaxurl, // defined for us if we're in /wp-admin
-	
-        /*
-        Parse response from wp_send_json_success(), something like:
+					<h2>Populating Collections from the server</h2>
+					<p>Out of the box, Backbone.js supports RESTful APIs through <code>Backbone.sync(method, model, [options])</code>:</p>
+					<ul>
+						<li>create → POST   <code>/collection</code>
+						<li>read → GET   	<code>/collection[/id]</code>
+						<li>update → PUT   <code>/collection/id</code>
+						<li>patch → PATCH   <code>/collection/id</code>
+						<li>delete → DELETE   <code>/collection/id</code>
+					</ul>
+				</section>
+				
+				<section>
+					<p>What Backbone expects when fetching/reading the collection:</p>
+					<pre><code class="javascript">
+[
+    {
+        id: 1,
+        title: "Hello, world"
+    },
+    {
+        ...
+    }
+]
+					</code></pre>
+					<p>What this sends:</p>
+						<pre><code class="php">wp_send_json_success( array( 'id': 1, 'title': 'Hello, world' ) );</code></pre>
+					<pre><code class="javascript">
+{
+    success: true,
+    data: [
         {
-            success: true,
-            data: [
-                 {
-                     id: 1,
-                     title: 'Hello World',
-                     post_status: 'publish'
-                 },
-                 ...
-            ]
+            id: 1,
+            title: "Hello, world"
         }
-        */
-	parse: function( response ) {
-		return response.data;
-	}
+    ]
+}
+					</code></pre>
+				</section>
+				
+				<section>
+					<p>So, just override <code>.parse()</code> to accommodate:</p>
+					
+					<pre><code class="javascript" data-trim contenteditable>
+var Posts = Backbone.Collection.extend({
+    model: Post,
+    url: ajaxurl, // defined for us if we're in /wp-admin
+    parse: function( response ) {
+        return response.data;
+    }
 });
 
 // Kick things off
@@ -220,10 +291,19 @@ $(document).ready(function() {
 });
 					</code></pre>
 					<p>Or can override <code>.sync()</code>, or even <code>.fetch()</code></p>
+					<p>Or could have a bunch of these everywhere: <pre><code class="php">echo json_encode();</code></pre> but that's messy.</p>
+				</section>
+				
+				<section>
+					<p>Note on calling <code>.fetch()</code> on page load:</p>
+					<blockquote>&ldquo;Note that fetch should not be used to populate collections on page load — all models needed at load time should already be bootstrapped in to place. fetch is intended for lazily-loading models for interfaces that are not needed immediately: for example, documents with collections of notes that may be toggled open and closed.&rdquo;</blockquote>
+					<small>http://backbonejs.org/#Collection-fetch</small>
+					<p>Depends on the situation</p>
 				</section>
 				
 				<section>
 					<h2>Routers</h2>
+					<p>Used for routing your application's URLs when using hash tags (#)</p>
 				</section>
 
                 <!-- EXAMPLE -->
@@ -255,7 +335,7 @@ plugins/
 
                 <section>
                     <h2>models/post.js</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var bbp = bbp || {};
 
 (function($){
@@ -268,7 +348,7 @@ var bbp = bbp || {};
 
                 <section>
                     <h2>backbone-js-wp-example.php</h2>
-                        <pre><code data-trim contenteditable>
+                        <pre><code class="php" data-trim contenteditable>
 /*
 Plugin Name: Backbone.js WP Example
 Plugin URI:
@@ -286,7 +366,7 @@ define( 'BBPOST_VERSION', 1 );
                 <section>
                     <h2>backbone-js-wp-example.php</h2>
                     <h3>Setting up actions</h3>
-                        <pre><code data-trim contenteditable>
+                        <pre><code class="php" data-trim contenteditable>
 class BBPostAdmin {
     public function __construct() {
         if ( is_admin() ) {
@@ -307,7 +387,7 @@ class BBPostAdmin {
                 <section>
                     <h2>backbone-js-wp-example.php</h2>
                     <h3>Adding the menu</h3>
-                        <pre><code data-trim contenteditable>
+                        <pre><code class="php" data-trim contenteditable>
                             add_menu_page( 'Backbone JS Post Admin Example', 'Backbone JS Post Admin Example', 'add_users', 'bbpostadmin', array( &$this, 'admin_page' ) );
                         </code></pre>
 						<p>admin_menu() function</p>
@@ -316,14 +396,13 @@ class BBPostAdmin {
                 <section>
                     <h2>backbone-js-wp-example.php</h2>
                     <h3>Adding the scripts</h3>
-                        <pre><code data-trim contenteditable>
-
+                        <pre><code class="php" data-trim contenteditable>
 // Add backbone.js models first, then collections, followed by views
 $folders = array( 'models', 'collections', 'views' );
 foreach ( $folders as $folder ) {
     foreach ( glob( dirname( __FILE__ ) . "/js/$folder/*.js" ) as $filename ) {
         $basename = basename( $filename );
-        wp_register_script( "$folder/$basename", plugins_url( "js/$folder/$basename", __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), BBPOST_VERSION );
+        wp_register_script( "$folder/$basename", plugins_url( "js/$folder/$basename", __FILE__ ), array( 'jquery', 'backbone', 'underscore', 'wp-util' ), BBPOST_VERSION );
         wp_enqueue_script( "$folder/$basename" );
     }
 }
@@ -332,12 +411,13 @@ wp_register_style( 'bbpost.admin.css', plugins_url( 'css/admin.css', __FILE__ ),
 wp_enqueue_style( 'bbpost.admin.css' );
                     </code></pre>
                     <p>enqueue_scripts() function</p>
+					<p>wp-util gives us the wp.ajax helper function</p>
                 </section>
 
 
                 <section>
                     <h2>Admin page template</h2>
-                        <pre><code data-trim contenteditable>
+                        <pre><code class="html" data-trim contenteditable>
 <script id="tmpl-bbpost" type="text/html">
     <div class="bbpost">
         Post title: <input type="text" class="title" value="<%- title %>" />, Status:
@@ -363,28 +443,27 @@ wp_enqueue_style( 'bbpost.admin.css' );
 					<h2>Admin page template</h2>
 					<h3>Individual post</h3>
                     <pre><code>
-<script id="tmpl-bbpost" type="text/html">	
-	<div class="bbpost">
-	    Post title: <input type="text" class="title" value="<%- title %>" />, Status:
-	    <select class="post_status">
-	        <option value=""></option>
-	        <option value="publish" <% if ( 'publish' == post_status ) { %>SELECTED<% } %>>Published</option>
-	        <option value="draft" <% if ( 'draft' == post_status ) { %>SELECTED<% } %>>Draft</option>
-	    </select>
-	    <button>Update</button>
-	</div>
-</script>
+&lt;div class=&quot;bbpost&quot;&gt;
+    Post title: &lt;input type=&quot;text&quot; class=&quot;title&quot; value=&quot;&lt;%- title %&gt;&quot; /&gt;, 
+    Status: 
+    &lt;select class=&quot;post_status&quot;&gt;
+        &lt;option value=&quot;&quot;&gt;&lt;/option&gt;
+        &lt;option value=&quot;publish&quot; &lt;% if ( 'publish' == post_status ) { %&gt;SELECTED&lt;% } %&gt;&gt;Published&lt;/option&gt;
+        &lt;option value=&quot;draft&quot; &lt;% if ( 'draft' == post_status ) { %&gt;SELECTED&lt;% } %&gt;&gt;Draft&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;button&gt;Update&lt;/button&gt;
+&lt;/div&gt;
 					</code></pre>
 				</section>
 
                 <section>
                     <h2>views/posts.js</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var bbp = bbp || {};
 
 (function($){
     bbp.PostsView = Backbone.View.extend({
-        el: '#bbposts',
+        el: '#bbposts', // Specifying an already existing element
 
         initialize: function() {
             this.collection.bind('add', this.addOne, this);
@@ -407,7 +486,7 @@ var bbp = bbp || {};
 
                 <section>
 					<h2>views/post.js</h2>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var bbp = bbp || {};
 
 (function($){
@@ -439,13 +518,15 @@ var bbp = bbp || {};
 				                <section>
 				                    <h2>backbone-js-wp-example.php</h2>
 				                    <h3>Function to send the post data</h3>
-				                        <pre><code data-trim contenteditable>
+				                        <pre><code class="php" data-trim contenteditable>
 if ( ! current_user_can( 'edit_published_posts' ) )
     wp_send_json_error();
 
-$posts = get_posts( array(
-    'post_status' => 'any'
-) );
+$posts = get_posts( 
+    array(
+        'post_status' => 'any'
+    )
+);
 $retval = array();
 foreach ( $posts as $post ) {
     $retval[] = array(
@@ -460,23 +541,9 @@ wp_send_json_success( $retval );
 				                        <p>ajax_fetch_posts()</p>
 				                </section>
 
-				                <section>
-										<h2>What wp_send_json_success() sends</h2>
-				                        <pre><code data-trim contenteditable>
-
-				                        </code></pre>
-				                </section>
-
-								<section>
-									<h2>What Backbone Expects</h2>
-				                    <pre><code data-trim contenteditable>
-
-				                    </code></pre>					
-								</section>
-
 								<section>
 									<h2>collections/posts.js</h2>
-									<pre><code data-trim contenteditable>
+									<pre><code class="javascript" data-trim contenteditable>
 var bbp = bbp || {};
 
 (function($){
@@ -487,28 +554,25 @@ var bbp = bbp || {};
             // This will be undefined if success: false
             return response.data;
 		}
-	});
+    });
 })(jQuery);
 								</code></pre>
 							</section>
 
-
-
-
                 <section>
                     <h2>Saving</h2>
                     <h3>Override save() in models/post.js</h3>
-					<pre><code data-trim contenteditable>
+					<pre><code class="javascript" data-trim contenteditable>
 var bbp = bbp || {};
 
 (function($){
     bbp.Post = Backbone.Model.extend({
         save: function( attributes, options ) {
-            var options = {};
-            options.data = {
+            options = options || {};
+            options.data = _.extend( options.data || {}, {
                 action: 'bbpost_save_post',
                 data: this.toJSON()
-            }
+            });
             var deferred = wp.ajax.send( options );
             deferred.done( function() {
                 alert('done');
@@ -525,7 +589,7 @@ var bbp = bbp || {};
                 <section>
                     <h2>backbone-js-wp-example.php</h2>
                     <h3>Saving a post title/status</h3>
-                        <pre><code data-trim contenteditable>
+                        <pre><code class="php" data-trim contenteditable>
 if ( ! $post = get_post( (int) $_POST['data']['id'] ) )
     wp_send_json_error();
 
@@ -546,9 +610,34 @@ else
 
 				<section>
 					<h2>wp-backbone</h2>
-					<p>...</p>
+					<p>Special versions of Backbone.View (wp.Backbone.View)</p>
+					<pre><code class="javascript">
+revisions.view.Frame = wp.Backbone.View.extend({
+    className: 'revisions',
+    template: wp.template('revisions-frame'),
+    // ...
+});
+					</code></pre>
+					<ul>
+						<li>Handling of SubViews</li>
+						<li>templates use <# #> instead of <% %> (as PHP can see <% %> as code: see <a href="https://core.trac.wordpress.org/ticket/23263">trac</a> for details)</li>
+						<li>See <code>revisions.js</code> for an example</li>
+					</ul>
 				</section>
 
+				<section>
+					<h1>Resources</h1>
+					<p><a href="http://backbonejs.org/">http://backbonejs.org/</a></p>
+					<p><a href="http://backbonetutorials.com/">http://backbonetutorials.com/</a></p>
+					<p><a href="https://github.com/addyosmani/backbone-fundamentals">https://github.com/addyosmani/backbone-fundamentals</a></p>
+					<p><a href="http://kadamwhite.github.io/talks/2014/backbone-wordpress-wpsessions">http://kadamwhite.github.io/talks/2014/backbone-wordpress-wpsessions</a></p>
+					<p>WordPress revisions.js</p>
+				</section>
+				
+				<section>
+					<h2>Enjoy!</h2>
+					<p><a href="http://brianhogg.com">brianhogg.com</a> | <a href="http://twitter.com/brianhogg">@brianhogg</a></p>
+				</section>
 			</div>
 
 		</div>
