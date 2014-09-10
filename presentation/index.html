@@ -66,6 +66,45 @@
 				</section>
 				
 				<section>
+					<pre><code class="javascript">
+(function($){
+    $(".submit").on("click", function(e) {
+        e.preventDefault();
+        var postId = $(this).attr("data-post-id");
+        $.ajax({
+            url: ajaxurl,
+            dataType: "json",
+            data: {
+                action: "submit-action-ajax",
+                input: $(".input.post-" + postId).val()
+            },
+            success: function(msg) {
+                alert("yay!");
+            },
+            error: function(v, msg) {
+                alert("boourns");
+            }
+        });
+    });
+
+    $(".input").on("keypress", function(e) {
+        var postId = $(this).attr("data-post-id");
+        jQuery(".charsRemaining.post-" + postId).html(140 - jQuery(this).val().length);
+    });
+
+    $(".post_status").on("change", function(e) {
+        var postId = $(this).attr("data-post-id");
+        $(this).parents("div").css("background-color", "#ffeedd");
+    });
+	
+    // ...
+})(jQuery);
+					</code></pre>
+					<p>Can end up with 1000+ lines of jQuery that "work"</p>
+					<p>Yes you can add your own structure, but why reinvent the wheel?</p>
+				</section>
+				
+				<section>
 					<h1>What is Backbone.JS?</h1>
 					<h3>Structure (MV*)</h3>
 					<p>Uses jQuery, but only hard requirement is Underscore.js</p>
@@ -100,7 +139,7 @@ console.log( html ); // "<strong>&amp;lt;script&amp;gt;</strong>"
 						<li>Performance</li>
 						<li>Leveraging the community</li>
 						<li>Re-inventing the wheel</li>
-						<li>Code structure</li>
+						<li>Code structure (avoid 1000+ lines of jQuery that "just works")</li>
 					</ul>
 				</section>
 				
@@ -657,6 +696,7 @@ revisions.view.Frame = wp.Backbone.View.extend({
 
 				<section>
 					<h1>Resources</h1>
+					<p><a href="https://github.com/brianhogg/backbone-js-wp-example">https://github.com/brianhogg/backbone-js-wp-example</a></p>
 					<p><a href="http://backbonejs.org/">http://backbonejs.org/</a></p>
 					<p><a href="http://backbonetutorials.com/">http://backbonetutorials.com/</a></p>
 					<p><a href="https://github.com/addyosmani/backbone-fundamentals">https://github.com/addyosmani/backbone-fundamentals</a></p>
