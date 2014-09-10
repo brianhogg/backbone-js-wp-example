@@ -66,8 +66,7 @@
 				</section>
 				
 				<section>
-					<pre><code class="javascript">
-(function($){
+					<pre><code class="javascript">(function($){
     $(".submit").on("click", function(e) {
         e.preventDefault();
         var postId = $(this).attr("data-post-id");
@@ -89,7 +88,7 @@
 
     $(".input").on("keypress", function(e) {
         var postId = $(this).attr("data-post-id");
-        jQuery(".charsRemaining.post-" + postId).html(140 - jQuery(this).val().length);
+        $(".charsRemaining.post-" + postId).html(140 - $(this).val().length);
     });
 
     $(".post_status").on("change", function(e) {
