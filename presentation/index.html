@@ -45,16 +45,12 @@
 				<section>
 					<h1>Introduction to Backbone.JS with WordPress</h1>
 					<p>
-						<small><a href="http://brianhogg.com">Brian Hogg</a> / <a href="http://twitter.com/brianhogg">@brianhogg</a></small>
+						<a href="http://brianhogg.com">Brian Hogg</a> / <a href="http://twitter.com/brianhogg">@brianhogg</a>
 					</p>
 				</section>
 
                 <section>
                     <img src="images/highres_bhc.png" />
-                </section>
-
-                <section>
-                    <img src="images/darien_lake.png" />
                 </section>
 				
 				<section>
@@ -67,6 +63,10 @@
 				</section>
 				
 				<section>
+				    <h2>Who are you?</h2>
+				</section>
+				
+				<section>
 					<h1>Why Backbone?</h1>
 					<ul>
 						<li>Enforces some structure on your JavaScript</li>
@@ -74,6 +74,17 @@
 					</ul>
 				</section>
 				
+				<section>
+					<h2>Why Not Just jQuery?</h2>
+					<ul>
+						<li>Performance</li>
+						<li>Leveraging the community</li>
+						<li>Re-inventing the wheel</li>
+						<li>Code structure (avoid 1000+ lines of jQuery that "just works")</li>
+					</ul>
+				</section>
+
+		<!--
 				<section>
 					<pre><code class="javascript">(function($){
     $(".submit").on("click", function(e) {
@@ -107,11 +118,10 @@
 	
     // ...
 })(jQuery);
-					</code></pre>
-					<p>Can end up with 1000+ lines of jQuery that "work"</p>
-					<p>Yes you can add your own structure, but why reinvent the wheel?</p>
+					</code></pre> 
+					<h2>jQuery / JavaScript can get messy</h2>
 				</section>
-				
+				-->
 				<section>
 					<h1>What is Backbone.JS?</h1>
 					<h3>Structure (MV*)</h3>
@@ -139,16 +149,6 @@ var template = _.template("<strong><%- value %></strong>");
 var html = template({ value: '&lt;script&gt;' });
 console.log( html ); // "<strong>&amp;lt;script&amp;gt;</strong>"
 					</code></pre>
-				</section>
-
-				<section>
-					<h2>Why Not Just jQuery?</h2>
-					<ul>
-						<li>Performance</li>
-						<li>Leveraging the community</li>
-						<li>Re-inventing the wheel</li>
-						<li>Code structure (avoid 1000+ lines of jQuery that "just works")</li>
-					</ul>
 				</section>
 				
 				<section>
@@ -271,7 +271,7 @@ return this; // for chaining
 					</code></pre>
 					<p>This uses Underscore.js' <code>_.template</code>, but you can use another!</p>
 				</section>
-				
+				<!--
 				<section>
 					<h2>Accessing the DOM element</h2>
 					<code>this.$el</code>
@@ -285,7 +285,7 @@ this.$el.append(view.render().el);
 					<code>this.$</code>
 					<pre><code class="javascript">this.$('.title').val()</code></pre>
 				</section>
-				
+				-->
 				<section>
 					<h2>Collections</h2>
 					<p>Ordered set of models</p>
@@ -361,7 +361,6 @@ $(document).ready(function() {
 });
 					</code></pre>
 					<p>Or can override <code>.sync()</code>, or even <code>.fetch()</code></p>
-					<p>Or could have a bunch of these everywhere: <pre><code class="php">echo json_encode();</code></pre> but that's messy.</p>
 				</section>
 				
 				<section>
@@ -688,7 +687,7 @@ else
                <section>
                    <p>Extra work to set up initially, but worth it later on!</p>
                 </section>
-
+              
 				<section>
 					<h2>wp-backbone</h2>
 					<p>Special versions of Backbone.View (wp.Backbone.View)</p>
@@ -702,8 +701,12 @@ revisions.view.Frame = wp.Backbone.View.extend({
 					<ul>
 						<li>Handling of SubViews</li>
 						<li>templates use <# #> instead of <% %> (as PHP can see <% %> as code: see <a href="https://core.trac.wordpress.org/ticket/23263">trac</a> for details)</li>
-						<li>See <code>revisions.js</code> for an example</li>
+						<li>See Mark Jaquith's talk at WordCamp SF 2014 on wordpress.tv</li>
 					</ul>
+				</section>
+				
+				<section>
+				    <h1>WP JSON REST API</h1>
 				</section>
 
 				<section>
@@ -713,6 +716,7 @@ revisions.view.Frame = wp.Backbone.View.extend({
 					<p><a href="http://backbonetutorials.com/">http://backbonetutorials.com/</a></p>
 					<p><a href="https://github.com/addyosmani/backbone-fundamentals">https://github.com/addyosmani/backbone-fundamentals</a></p>
 					<p><a href="http://kadamwhite.github.io/talks/2014/backbone-wordpress-wpsessions">http://kadamwhite.github.io/talks/2014/backbone-wordpress-wpsessions</a></p>
+					<p><a href="http://wordpress.tv/2014/11/03/mark-jaquith-backbone-views-in-wordpress/">http://wordpress.tv/2014/11/03/mark-jaquith-backbone-views-in-wordpress/</a></p>
 					<p>WordPress revisions.js</p>
 				</section>
 				

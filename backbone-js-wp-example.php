@@ -41,7 +41,7 @@ class BBPostAdmin {
             }
         }
 
-        wp_register_style( 'bbpost.admin.css', plugins_url( 'css/admin.css', __FILE__ ), false, ECN_VERSION );
+        wp_register_style( 'bbpost.admin.css', plugins_url( 'css/admin.css', __FILE__ ), false, BBPOST_VERSION );
         wp_enqueue_style( 'bbpost.admin.css' );
     }
 
